@@ -16,7 +16,7 @@ exports.runTest = function () {
         'version': '10',
         'platform': 'Windows 7 64-Bit',
         'screenResolution': '1366x768'
-    }
+    };
 
     caps.username = username;
     caps.password = authkey;
@@ -46,4 +46,4 @@ exports.runTest = function () {
 
     driver.get('http://local/TestPage.html');
     return driver.wait(checkTitle, 1000).then(quitDriver, handleFailure);
-}
+};
