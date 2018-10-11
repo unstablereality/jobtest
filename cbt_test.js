@@ -68,8 +68,8 @@ cbt.start(
             // });
             browser = mobileDevice.browsers[0];
             resolution = mobileDevice.resolutions[0];
-            console.log('browserName: ' + browser.caps.browserName + ' version: ' + browser.version + ' platform: ' + mobileDevice.caps.platformName + ' screenResolution: ' + resolution.name);
-            //selenium.runTest(mobileDevice, browser, resolution);
+            // console.log('browserName: ' + browser.caps.browserName + ' version: ' + browser.version + ' platform: ' + mobileDevice.caps.platformName + ' screenResolution: ' + resolution.name);
+            selenium.runTest(mobileDevice, browser, resolution);
         }
     },
     // fs.open('stopserver', 'w', function (err) {
