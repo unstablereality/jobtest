@@ -1,6 +1,9 @@
 "use strict";
 
-exports.runTest = function (device, browser, resolution) {
+// Function to run parallel selenium tests and report the result to CBT
+//
+// @param {object}   testCaps   An object containing the capabilities for the tests
+exports.runTest = function (testCaps) {
 
     var username = 'daniel.soskel@gmail.com';
     var authkey = 'ua01f835227df050';
@@ -11,30 +14,44 @@ exports.runTest = function (device, browser, resolution) {
 
     var remoteHub = "http://hub.crossbrowsertesting.com:80/wd/hub";
 
-    var browsers = [
-        {browserName: 'Firefox', platform: 'Windows 7 64-bit', version: '27', screen_resolution: '1024x768'},
-        {browserName: 'Chrome', platform: 'Mac OSX 10.9', version: '40x64', screen_resolution: '1024x768'},
-        {browserName: 'Internet Explorer', platform: 'Windows 8.1', version: '11', screen_resolution: '1024x768'}
-    ];
+    var flows = testCaps.map(function (testCap) {
 
-    var flows = browsers.map(function (browser) {
+        // Initialize the caps object.
+        var caps = [];
 
-        var caps = {
-            name: 'Node Parallel Example',
-            browserName: browser.browserName,
-            version: browser.version,
-            platform: browser.platform,
-            screen_resolution: browser.screen_resolution,
-            username: username,
-            password: authkey
-        };
+        // Build the caps object for a mobile device.
+        if (testCap.type === "mobile"){
+            caps = {
+                name: 'Page Title Verification',
+                browserName: testCap.browserName,
+                deviceName: testCap.deviceName,
+                platformName: testCap.platformName,
+                version: testCap.version,
+                deviceOrientation: testCap.deviceOrientation,
+                username: username,
+                password: authkey
+            };
+        }
+
+        // Build the caps object for a desktop device.
+        if (testCap.type === "desktop") {
+            caps = {
+                name: 'Page Title Verification',
+                browserName: testCap.browserName,
+                platform: testCap.platform,
+                version: testCap.version,
+                screen_resolution: testCap.screen_resolution,
+                username: username,
+                password: authkey
+            };
+        }
 
         caps.username = username;
         caps.password = authkey;
 
         var sessionId = null;
 
-        //register general error handler
+        // Register general error handler.
         webdriver.promise.controlFlow().on('uncaughtException', webdriverErrorHandler);
 
         console.log('Connection to the CrossBrowserTesting remote server');
@@ -44,31 +61,29 @@ exports.runTest = function (device, browser, resolution) {
             .withCapabilities(caps)
             .build();
 
-        //console.log('driver is ', driver)
-
-
         // All driver calls are automatically queued by flow control.
         // Async functions outside of driver can use call() function.
         console.log('Waiting on the browser to be launched and the session to start');
 
         driver.getSession().then(function (session) {
             sessionId = session.id_; //need for API calls
+            console.log('Browser: ' + caps.browserName);
             console.log('Session ID: ', sessionId);
             console.log('See your test run at: https://app.crossbrowsertesting.com/selenium/' + sessionId)
         });
 
-        //load your URL
+        // Load the URL.
         driver.get('http://local/TestPage.html');
 
         driver.wait(checkTitle(), 1000).then(driver.quit());
 
-        //set the score as passing
+        // Set the score as passing.
         driver.call(setScore, null, 'pass').then(function (result) {
-            console.log('set score to pass')
+            console.log('set score to pass');
         });
 
 
-        //Call API to set the score
+        // Call API to set the score.
         function setScore(score) {
 
             //webdriver has built-in promise to use
@@ -110,6 +125,7 @@ exports.runTest = function (device, browser, resolution) {
             return deferred.promise;
         }
 
+        // Check the title of the page and see if it matches the expected title
         function checkTitle() {
             driver.getTitle()
                 .then(function (title) {
@@ -118,7 +134,7 @@ exports.runTest = function (device, browser, resolution) {
             return webdriver.until.titleIs('Take Home Test');
         }
 
-        //general error catching function
+        // General error catching function.
         function webdriverErrorHandler(err) {
 
             console.error('There was an unhandled exception! ' + err);
