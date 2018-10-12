@@ -20,7 +20,7 @@ exports.runTest = function (testCaps) {
         var caps = [];
 
         // Build the caps object for a mobile device.
-        if (testCap.type === "mobile"){
+        if (testCap.type === "mobile") {
             caps = {
                 name: 'Page Title Verification',
                 browserName: testCap.browserName,

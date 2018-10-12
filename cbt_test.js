@@ -77,12 +77,12 @@ function getDevice(deviceType, devices) {
     //     if (err) {
     //         return console.log('Error: ' + err)
     //     }
-        if (deviceType === 'mobile') {
-            return getRandom(filterByField(devices, 'device', deviceType));
-        }
-        else {
-            return getRandom(getDesktops(devices, deviceType))
-        }
+    if (deviceType === 'mobile') {
+        return getRandom(filterByField(devices, 'device', deviceType));
+    }
+    else {
+        return getRandom(getDesktops(devices, deviceType))
+    }
     //});
 }
 
