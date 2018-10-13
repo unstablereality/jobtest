@@ -14,7 +14,7 @@ exports.runTest = function (testCaps) {
 
     var remoteHub = "http://hub.crossbrowsertesting.com:80/wd/hub";
 
-    var flows = testCaps.map(function (testCap) {
+    var flows = testCaps.map(async function (testCap) {
 
         // Initialize the caps object.
         var caps = [];
@@ -54,7 +54,7 @@ exports.runTest = function (testCaps) {
         // Register general error handler.
         webdriver.promise.controlFlow().on('uncaughtException', webdriverErrorHandler);
 
-        console.log('Connection to the CrossBrowserTesting remote server');
+        console.log('Connecting to the CrossBrowserTesting remote server');
 
         var driver = new webdriver.Builder()
             .usingServer(remoteHub)
@@ -63,11 +63,10 @@ exports.runTest = function (testCaps) {
 
         // All driver calls are automatically queued by flow control.
         // Async functions outside of driver can use call() function.
-        console.log('Waiting on the browser to be launched and the session to start');
+        console.log('Waiting on the ' + caps.browserName + ' browser to be launched and the session to start');
 
         driver.getSession().then(function (session) {
             sessionId = session.id_; //need for API calls
-            console.log('Browser: ' + caps.browserName);
             console.log('Session ID: ', sessionId);
             console.log('See your test run at: https://app.crossbrowsertesting.com/selenium/' + sessionId)
         });
@@ -75,13 +74,23 @@ exports.runTest = function (testCaps) {
         // Load the URL.
         driver.get('http://local/TestPage.html');
 
-        driver.wait(checkTitle(), 1000).then(driver.quit());
+        // Run the test.
+        try {
+            var response = await driver
+                .wait(webdriver.until.titleIs('Take Home Test'), 1000)
+                .catch(() => {});
 
-        // Set the score as passing.
-        driver.call(setScore, null, 'pass').then(function (result) {
-            console.log('set score to pass');
-        });
-
+            (response)
+            ? driver.call(setScore, null, 'pass').then(function (result) {
+                console.log('Test score set to pass');
+                })
+            : driver.call(setScore, null, 'fail').then(function (result) {
+                    console.log('Test score set to fail');
+                });
+        }
+        finally {
+            await driver.quit();
+        }
 
         // Call API to set the score.
         function setScore(score) {
@@ -125,21 +134,12 @@ exports.runTest = function (testCaps) {
             return deferred.promise;
         }
 
-        // Check the title of the page and see if it matches the expected title
-        function checkTitle() {
-            driver.getTitle()
-                .then(function (title) {
-                    console.log("The title is: " + title)
-                });
-            return webdriver.until.titleIs('Take Home Test');
-        }
-
         // General error catching function.
         function webdriverErrorHandler(err) {
 
             console.error('There was an unhandled exception! ' + err);
 
-            //if we had a session, end it and mark failed
+            // If we had a session, end it and mark failed.
             if (driver && sessionId) {
                 driver.quit();
                 setScore('fail').then(function (result) {

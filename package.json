@@ -4,9 +4,10 @@
   "description": "",
   "main": "cbt_test.js",
   "dependencies": {
+    "async": "^2.6.1",
     "cbt_tunnels": "^0.9.7",
     "request": "^2.81.0",
-    "selenium-webdriver": "^3.6.0",
+    "selenium-webdriver": "^3.6.0"
   },
   "devDependencies": {},
   "scripts": {

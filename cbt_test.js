@@ -1,9 +1,9 @@
 'use strict';
 
 var cbt = require('cbt_tunnels');
-var fs = require('fs');
-var request = require('request');
+var request = require('request-promise');
 var selenium = require('./selenium.js');
+var as = require('async')
 var APIUrl = 'https://daniel.soskel@gmail.com:ua01f835227df050@crossbrowsertesting.com/api/v3';
 
 // Start the CBT Tunnel
@@ -11,13 +11,12 @@ cbt.start(
     {
         username: "daniel.soskel@gmail.com",
         authkey: "ua01f835227df050",
-        kill: "stopserver",
-        dir: __dirname + '/'
+        dir: __dirname + '\\'
     },
-    function (err) {
+    async function (err) {
         if (!err) {
             // Get the JSON from the API
-            var apiResult = JSON.parse(fs.readFileSync('apiResult.json'));
+            var apiResult = await queryAPI();
 
             // Get three random devices and store them in an array
             var testDevices = [];
@@ -59,31 +58,39 @@ cbt.start(
                     )
                 }
             });
-            selenium.runTest(testCaps);
+
+            await seleniumTest(testCaps);
+            cbt.stop();
         }
     },
-    // fs.open('stopserver', 'w', function (err) {
-    //     if (err) throw err
-    // })
 );
+
+// Get the API results
+function queryAPI() {
+    return new Promise((resolve, reject) => {
+        request(APIUrl + '/selenium/browsers', {json:true}, (err, res, body) => {
+            if (err) {
+                return console.log('Error: ' + err)
+            }
+            resolve(body);
+        });
+    });
+}
+
+function seleniumTest(testCaps){
+    new Promise (function(resolve, reject) {
+        resolve(selenium.runTest(testCaps));
+    })
+}
 
 // Get a random device from the API object.
 //
 // @param {string}  deviceType  The type of device (desktop or mobile)
 // @param {object}   device      The API object
 function getDevice(deviceType, devices) {
-    // TODO move this out to its own function, then call that as async and use it before starting the tunnel, possibly in a startup function wrapped around cbt.start()
-    //request(APIUrl + '/selenium/browsers', {json: true}, (err, res, body) => {
-    //     if (err) {
-    //         return console.log('Error: ' + err)
-    //     }
-    if (deviceType === 'mobile') {
-        return getRandom(filterByField(devices, 'device', deviceType));
-    }
-    else {
-        return getRandom(getDesktops(devices, deviceType))
-    }
-    //});
+    return (deviceType === 'mobile')
+        ? getRandom(filterByField(devices, 'device', deviceType))
+        : getRandom(getDesktops(devices, deviceType));
 }
 
 // Filter an array and return all objects matching the filter value in a certain field.
