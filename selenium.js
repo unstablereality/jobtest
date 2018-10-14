@@ -1,5 +1,7 @@
 "use strict";
 
+var fs = require('fs');
+
 // Function to run parallel selenium tests and report the result to CBT
 //
 // @param {object}   testCaps   An object containing the capabilities for the tests
@@ -150,6 +152,7 @@ exports.runTest = function (testCaps) {
                     })
                 }
             }
+
             resolve();
         });
     });

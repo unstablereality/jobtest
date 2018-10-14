@@ -59,7 +59,7 @@ cbt.start(
                     )
                 }
             });
-            await Promise.all(selenium.runTest(testCaps));
+            selenium.runTest(testCaps)
             cbt.stop();
         }
     },
@@ -75,13 +75,6 @@ function queryAPI() {
             resolve(body);
         });
     });
-}
-
-function seleniumTest(testCaps) {
-    var promise = selenium.runTest(testCaps);
-    promise.then(function () {
-        cbt.stop();
-    })
 }
 
 // Get a random device from the API object.
