@@ -3,7 +3,8 @@
 var cbt = require('cbt_tunnels');
 var request = require('request-promise');
 var selenium = require('./selenium.js');
-var as = require('async')
+var as = require('async');
+var co = require('co');
 var APIUrl = 'https://daniel.soskel@gmail.com:ua01f835227df050@crossbrowsertesting.com/api/v3';
 
 // Start the CBT Tunnel
@@ -58,17 +59,16 @@ cbt.start(
                     )
                 }
             });
-
-            await seleniumTest(testCaps);
+            await Promise.all(selenium.runTest(testCaps));
             cbt.stop();
         }
     },
 );
 
-// Get the API results
+// Get the API results.
 function queryAPI() {
     return new Promise((resolve, reject) => {
-        request(APIUrl + '/selenium/browsers', {json:true}, (err, res, body) => {
+        request(APIUrl + '/selenium/browsers', {json: true}, (err, res, body) => {
             if (err) {
                 return console.log('Error: ' + err)
             }
@@ -77,9 +77,10 @@ function queryAPI() {
     });
 }
 
-function seleniumTest(testCaps){
-    new Promise (function(resolve, reject) {
-        resolve(selenium.runTest(testCaps));
+function seleniumTest(testCaps) {
+    var promise = selenium.runTest(testCaps);
+    promise.then(function () {
+        cbt.stop();
     })
 }
 
