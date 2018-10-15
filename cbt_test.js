@@ -3,8 +3,6 @@
 var cbt = require('cbt_tunnels');
 var request = require('request-promise');
 var selenium = require('./selenium.js');
-var as = require('async');
-var co = require('co');
 var APIUrl = 'https://daniel.soskel@gmail.com:ua01f835227df050@crossbrowsertesting.com/api/v3';
 
 // Start the CBT Tunnel
@@ -59,7 +57,7 @@ cbt.start(
                     )
                 }
             });
-            selenium.runTest(testCaps)
+            selenium.runTest(testCaps);
             cbt.stop();
         }
     },
@@ -67,7 +65,7 @@ cbt.start(
 
 // Get the API results.
 function queryAPI() {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
         request(APIUrl + '/selenium/browsers', {json: true}, (err, res, body) => {
             if (err) {
                 return console.log('Error: ' + err)

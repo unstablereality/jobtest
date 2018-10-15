@@ -1,7 +1,5 @@
 "use strict";
 
-var fs = require('fs');
-
 // Function to run parallel selenium tests and report the result to CBT
 //
 // @param {object}   testCaps   An object containing the capabilities for the tests
@@ -26,7 +24,7 @@ exports.runTest = function (testCaps) {
             // Build the caps object for a mobile device.
             if (testCap.type === "mobile") {
                 caps = {
-                    name: 'Page Title Verification',
+                    name: testCap.platformName + ' Page Title Verification',
                     browserName: testCap.browserName,
                     deviceName: testCap.deviceName,
                     platformName: testCap.platformName,
@@ -40,7 +38,7 @@ exports.runTest = function (testCaps) {
             // Build the caps object for a desktop device.
             if (testCap.type === "desktop") {
                 caps = {
-                    name: 'Page Title Verification',
+                    name: testCap.platform + ' Page Title Verification',
                     browserName: testCap.browserName,
                     platform: testCap.platform,
                     version: testCap.version,
@@ -86,10 +84,10 @@ exports.runTest = function (testCaps) {
                     });
 
                 (response)
-                    ? driver.call(setScore, null, 'pass').then(function (result) {
+                    ? driver.call(setScore, null, 'pass').then(function () {
                         console.log('Test score set to pass');
                     })
-                    : driver.call(setScore, null, 'fail').then(function (result) {
+                    : driver.call(setScore, null, 'fail').then(function () {
                         console.log('Test score set to fail');
                     });
             }
@@ -147,7 +145,7 @@ exports.runTest = function (testCaps) {
                 // If we had a session, end it and mark failed.
                 if (driver && sessionId) {
                     driver.quit();
-                    setScore('fail').then(function (result) {
+                    setScore('fail').then(function () {
                         console.log('set score to fail')
                     })
                 }
