@@ -2,7 +2,7 @@
 
 var cbt = require('cbt_tunnels');
 var request = require('request-promise');
-var selenium = require('./selenium.js');
+var seleniumTest = require('./seleniumTest.js');
 var APIUrl = 'https://daniel.soskel@gmail.com:ua01f835227df050@crossbrowsertesting.com/api/v3';
 
 // Start the CBT Tunnel
@@ -19,9 +19,9 @@ cbt.start(
 
             // Get three random devices and store them in an array
             var testDevices = [];
-            testDevices.push(getDevice('mobile', apiResult));
             testDevices.push(getDevice('Windows', apiResult));
             testDevices.push(getDevice('Mac', apiResult));
+            testDevices.push(getDevice('mobile', apiResult));
 
             // Iterate the array and get what we need for the selenium capabilities list
             var testCaps = [];
@@ -57,7 +57,7 @@ cbt.start(
                     )
                 }
             });
-            selenium.runTest(testCaps);
+            await seleniumTest.runTest(testCaps);
             cbt.stop();
         }
     },
@@ -66,7 +66,7 @@ cbt.start(
 // Get the API results.
 function queryAPI() {
     return new Promise((resolve) => {
-        request(APIUrl + '/selenium/browsers', {json: true}, (err, res, body) => {
+        request(`${APIUrl}/selenium/browsers`, {json: true}, (err, res, body) => {
             if (err) {
                 return console.log('Error: ' + err)
             }

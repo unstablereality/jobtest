@@ -5,7 +5,7 @@
 // @param {object}   testCaps   An object containing the capabilities for the tests
 exports.runTest = function (testCaps) {
 
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
 
         var username = 'daniel.soskel@gmail.com';
         var authkey = 'ua01f835227df050';
@@ -65,7 +65,7 @@ exports.runTest = function (testCaps) {
 
             // All driver calls are automatically queued by flow control.
             // Async functions outside of driver can use call() function.
-            console.log('Waiting on the ' + caps.browserName + ' browser to be launched and the session to start');
+            console.log(`Waiting on the ${caps.browserName} browser to be launched and the session to start`);
 
             driver.getSession().then(function (session) {
                 sessionId = session.id_; //need for API calls
@@ -106,7 +106,7 @@ exports.runTest = function (testCaps) {
 
                     request({
                             method: 'PUT',
-                            uri: 'https://crossbrowsertesting.com/api/v3/selenium/' + sessionId,
+                            uri: `https://crossbrowsertesting.com/api/v3/selenium/${sessionId}`,
                             body: {'action': 'set_score', 'score': score},
                             json: true
                         },
@@ -150,8 +150,7 @@ exports.runTest = function (testCaps) {
                     })
                 }
             }
-
-            resolve();
         });
+        Promise.all(flows).then ( () => resolve());
     });
 };
