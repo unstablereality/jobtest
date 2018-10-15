@@ -1,17 +1,17 @@
 "use strict";
 
-// Function to run parallel selenium tests and report the result to CBT
+// Function to run parallel selenium tests and report the result to CBT.
 //
 // @param {object}   testCaps   An object containing the capabilities for the tests
 exports.runTest = function (testCaps) {
 
+    // Set up a promise for the tests to complete.
     return new Promise((resolve) => {
 
         var username = 'daniel.soskel@gmail.com';
         var authkey = 'ua01f835227df050';
 
         var webdriver = require('selenium-webdriver'),
-            SeleniumServer = require('selenium-webdriver/remote').SeleniumServer,
             request = require('request');
 
         var remoteHub = "http://hub.crossbrowsertesting.com:80/wd/hub";
@@ -53,7 +53,7 @@ exports.runTest = function (testCaps) {
 
             var sessionId = null;
 
-            // Register general error handler.
+            // Register general error handler
             webdriver.promise.controlFlow().on('uncaughtException', webdriverErrorHandler);
 
             console.log('Connecting to the CrossBrowserTesting remote server');
@@ -63,8 +63,8 @@ exports.runTest = function (testCaps) {
                 .withCapabilities(caps)
                 .build();
 
-            // All driver calls are automatically queued by flow control.
-            // Async functions outside of driver can use call() function.
+            // All driver calls are automatically queued by flow control
+            // Async functions outside of driver can use call() function
             console.log(`Waiting on the ${caps.browserName} browser to be launched and the session to start`);
 
             driver.getSession().then(function (session) {
@@ -73,10 +73,10 @@ exports.runTest = function (testCaps) {
                 console.log('See your test run at: https://app.crossbrowsertesting.com/selenium/' + sessionId)
             });
 
-            // Load the URL.
+            // Load the URL
             driver.get('http://local/TestPage.html');
 
-            // Run the test.
+            // Run the test, and set the score based on the result.
             try {
                 var response = await driver
                     .wait(webdriver.until.titleIs('Take Home Test'), 1000)
@@ -95,7 +95,7 @@ exports.runTest = function (testCaps) {
                 await driver.quit();
             }
 
-            // Call API to set the score.
+            // Call API to set the score
             function setScore(score) {
 
                 //webdriver has built-in promise to use
@@ -151,6 +151,8 @@ exports.runTest = function (testCaps) {
                 }
             }
         });
+
+        // Generate a promise for each of the flows and only resolve after all 3 are complete.
         Promise.all(flows).then ( () => resolve());
     });
 };

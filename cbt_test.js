@@ -14,22 +14,22 @@ cbt.start(
     },
     async function (err) {
         if (!err) {
-            // Get the JSON from the API
+            // Get the JSON from the API.
             var apiResult = await queryAPI();
 
-            // Get three random devices and store them in an array
+            // Get three random devices and store them in an array.
             var testDevices = [];
             testDevices.push(getDevice('Windows', apiResult));
             testDevices.push(getDevice('Mac', apiResult));
             testDevices.push(getDevice('mobile', apiResult));
 
-            // Iterate the array and get what we need for the selenium capabilities list
+            // Iterate the array and get what we need for the selenium capabilities list.
             var testCaps = [];
             testDevices.forEach(function (testDevice) {
-                // Get a random browser from the device
+                // Get a random browser from the device.
                 var browser = getRandom(testDevice.browsers);
 
-                // If the device is mobile, set up the mobile capabilities list
+                // If the device is mobile, set up the mobile capabilities list.
                 if (testDevice.device === 'mobile') {
                     testCaps.push(
                         {
@@ -43,7 +43,7 @@ cbt.start(
                     )
                 }
 
-                // if the device is a desktop, set up the desktop capabilities list
+                // If the device is a desktop, set up the desktop capabilities list.
                 if (testDevice.device === 'desktop') {
                     var res = getRandom(testDevice.resolutions);
                     testCaps.push(
@@ -57,6 +57,8 @@ cbt.start(
                     )
                 }
             });
+
+            // Run the tests and wait for them to complete, then close the tunnel
             await seleniumTest.runTest(testCaps);
             cbt.stop();
         }
