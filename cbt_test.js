@@ -36,7 +36,7 @@ cbt.start(
             testDevices.push(getDevice('Mac', apiResult));
             testDevices.push(getDevice('mobile', apiResult));
 
-            // Initialize an array to hold the capabilities for the tests
+            // Initialize an array to hold the capabilities for the tests.
             var testCaps = [];
 
             // Iterate the array of devices and get what we need for the selenium capabilities list.
@@ -44,6 +44,9 @@ cbt.start(
 
                 // Get a random browser from the device.
                 var browser = getRandom(testDevice.browsers);
+
+                // Set up the capabilities objects and push them to the testCaps array.
+                // We'll need to set them up differently dpeneding on mobile vs desktop devices.
 
                 // If the device is mobile, set up the mobile capabilities list.
                 if (testDevice.device === 'mobile') {
@@ -81,7 +84,7 @@ cbt.start(
     },
 );
 
-// Get the API results.
+// Get the list of devices and browsers from the CBT API, returned as a JSON object.
 function queryAPI() {
     return new Promise((resolve) => {
         request(`${APIUrl}/selenium/browsers`, {json: true}, (err, res, body) => {
@@ -93,7 +96,7 @@ function queryAPI() {
     });
 }
 
-// Get a random device from the API  using the getRandom() function.
+// Get a random device from the API object using the getRandom() function.
 //
 // @param {string}  deviceType  The type of device (desktop or mobile)
 // @param {object}   device      The API object
@@ -103,7 +106,7 @@ function getDevice(deviceType, devices) {
         : getRandom(getDesktops(devices, deviceType));
 }
 
-// Filter an array and return all objects matching the filter value in a certain field.
+// Filter an array of devices and return all objects matching the filter value in a certain field.
 //
 // @param {object} devices  An JSON object of devices to be filtered
 // @param {string} field    The field to to use for filtering

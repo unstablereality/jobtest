@@ -1,6 +1,6 @@
 "use strict";
 
-// Function to run parallel selenium tests and report the result to CBT.
+// Function module to run parallel selenium tests and report the result to CBT.
 //
 // @param {object}   testCaps   An object containing the capabilities for the tests
 exports.runTest = function (testCaps) {
@@ -18,7 +18,8 @@ exports.runTest = function (testCaps) {
 
         var flows = testCaps.map(async function (testCap) {
 
-            // Initialize the caps object.
+            // Initialize the caps object which will store the capabilities for a test.
+            // We will need to initialize it differently depending on mobile vs desktop devices.
             var caps = [];
 
             // Build the caps object for a mobile device.
