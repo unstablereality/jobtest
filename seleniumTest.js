@@ -58,6 +58,7 @@ exports.runTest = function (testCaps) {
 
             console.log('Connecting to the CrossBrowserTesting remote server');
 
+            // Create the connection to the CBT server
             var driver = new webdriver.Builder()
                 .usingServer(remoteHub)
                 .withCapabilities(caps)
@@ -96,6 +97,8 @@ exports.runTest = function (testCaps) {
             }
 
             // Call API to set the score
+            //
+            // @param {string} score The score, pass or fail
             function setScore(score) {
 
                 //webdriver has built-in promise to use

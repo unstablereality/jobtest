@@ -1,3 +1,16 @@
+/*
+Author: Daniel Soskel
+Date: October 16, 2018
+
+Application to pull a list of devices and browsers from the Cross Browser Testing API, randomly
+select 3 devices, randomly select a browser and resolution for each device. The application will then
+open a local tunnel to the CBT testing server and run a test on each browser against a local page to
+check that the page title is correct, mark the test as pass or fail, and close the tunnel after
+all tests have run.
+
+Usage: node cbt_test.js
+ */
+
 'use strict';
 
 var cbt = require('cbt_tunnels');
@@ -14,7 +27,7 @@ cbt.start(
     },
     async function (err) {
         if (!err) {
-            // Get the JSON from the API.
+            // Request the JSON from the API, and wait for it to be returned before continuing.
             var apiResult = await queryAPI();
 
             // Get three random devices and store them in an array.
@@ -23,9 +36,12 @@ cbt.start(
             testDevices.push(getDevice('Mac', apiResult));
             testDevices.push(getDevice('mobile', apiResult));
 
-            // Iterate the array and get what we need for the selenium capabilities list.
+            // Initialize an array to hold the capabilities for the tests
             var testCaps = [];
+
+            // Iterate the array of devices and get what we need for the selenium capabilities list.
             testDevices.forEach(function (testDevice) {
+
                 // Get a random browser from the device.
                 var browser = getRandom(testDevice.browsers);
 
@@ -77,7 +93,7 @@ function queryAPI() {
     });
 }
 
-// Get a random device from the API object.
+// Get a random device from the API  using the getRandom() function.
 //
 // @param {string}  deviceType  The type of device (desktop or mobile)
 // @param {object}   device      The API object
@@ -99,6 +115,8 @@ function filterByField(devices, field, filter) {
 }
 
 // Get a list of desktops matching a certain type (should be Mac or Windows).
+// Utilizes filterByField() to sort the list twice, once to get all desktops,
+// and again to get a list of desktops of the specified type.
 //
 // @param {object} arrDevices  A JSON object of devices to be filtered
 // @param {string} string      The type of desktop to be returned
