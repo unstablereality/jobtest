@@ -13,10 +13,10 @@ Usage: node cbt_test.js
 
 'use strict';
 
-var cbt = require('cbt_tunnels');
-var request = require('request-promise');
-var seleniumTest = require('./seleniumTest.js');
-var APIUrl = 'https://daniel.soskel@gmail.com:ua01f835227df050@crossbrowsertesting.com/api/v3';
+const cbt = require('cbt_tunnels');
+const request = require('request-promise');
+const seleniumTest = require('./seleniumTest.js');
+const APIUrl = 'https://daniel.soskel@gmail.com:ua01f835227df050@crossbrowsertesting.com/api/v3';
 
 // Start the CBT Tunnel
 cbt.start(
@@ -28,22 +28,22 @@ cbt.start(
     async function (err) {
         if (!err) {
             // Request the JSON from the API, and wait for it to be returned before continuing.
-            var apiResult = await queryAPI();
+            let apiResult = await queryAPI();
 
             // Get three random devices and store them in an array.
-            var testDevices = [];
+            let testDevices = [];
             testDevices.push(getDevice('Windows', apiResult));
             testDevices.push(getDevice('Mac', apiResult));
             testDevices.push(getDevice('mobile', apiResult));
 
             // Initialize an array to hold the capabilities for the tests.
-            var testCaps = [];
+            let testCaps = [];
 
             // Iterate the array of devices and get what we need for the selenium capabilities list.
             testDevices.forEach(function (testDevice) {
 
                 // Get a random browser from the device.
-                var browser = getRandom(testDevice.browsers);
+                let browser = getRandom(testDevice.browsers);
 
                 // Set up the capabilities objects and push them to the testCaps array.
                 // We'll need to set them up differently dpeneding on mobile vs desktop devices.
@@ -64,7 +64,7 @@ cbt.start(
 
                 // If the device is a desktop, set up the desktop capabilities list.
                 if (testDevice.device === 'desktop') {
-                    var res = getRandom(testDevice.resolutions);
+                    let res = getRandom(testDevice.resolutions);
                     testCaps.push(
                         {
                             browserName: browser.caps.browserName,
@@ -124,7 +124,7 @@ function filterByField(devices, field, filter) {
 // @param {object} arrDevices  A JSON object of devices to be filtered
 // @param {string} string      The type of desktop to be returned
 function getDesktops(arrDevices, type) {
-    var desktops = filterByField(arrDevices, 'device', 'desktop');
+    let desktops = filterByField(arrDevices, 'device', 'desktop');
     return filterByField(desktops, 'type', type);
 }
 
@@ -132,7 +132,7 @@ function getDesktops(arrDevices, type) {
 //
 // @param {object}  array   An array of JSON objects
 function getRandom(array) {
-    var arrKeys = Object.keys(array);
-    var randKey = arrKeys[Math.floor(Math.random() * arrKeys.length)];
+    let arrKeys = Object.keys(array);
+    let randKey = arrKeys[Math.floor(Math.random() * arrKeys.length)];
     return array[randKey];
 }
