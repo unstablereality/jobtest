@@ -8,19 +8,19 @@ exports.runTest = function (testCaps) {
     // Set up a promise for the tests to complete.
     return new Promise((resolve) => {
 
-        var username = 'daniel.soskel@gmail.com';
-        var authkey = 'ua01f835227df050';
+        const username = 'daniel.soskel@gmail.com';
+        const authkey = 'ua01f835227df050';
 
-        var webdriver = require('selenium-webdriver'),
+        const webdriver = require('selenium-webdriver'),
             request = require('request');
 
-        var remoteHub = "http://hub.crossbrowsertesting.com:80/wd/hub";
+        const remoteHub = "http://hub.crossbrowsertesting.com:80/wd/hub";
 
-        var flows = testCaps.map(async function (testCap) {
+        let flows = testCaps.map(async function (testCap) {
 
             // Initialize the caps object which will store the capabilities for a test.
             // We will need to initialize it differently depending on mobile vs desktop devices.
-            var caps = [];
+            let caps = [];
 
             // Build the caps object for a mobile device.
             if (testCap.type === "mobile") {
@@ -52,7 +52,7 @@ exports.runTest = function (testCaps) {
             caps.username = username;
             caps.password = authkey;
 
-            var sessionId = null;
+            let sessionId = null;
 
             // Register general error handler
             webdriver.promise.controlFlow().on('uncaughtException', webdriverErrorHandler);
@@ -60,7 +60,7 @@ exports.runTest = function (testCaps) {
             console.log('Connecting to the CrossBrowserTesting remote server');
 
             // Create the connection to the CBT server
-            var driver = new webdriver.Builder()
+            let driver = new webdriver.Builder()
                 .usingServer(remoteHub)
                 .withCapabilities(caps)
                 .build();
@@ -80,7 +80,7 @@ exports.runTest = function (testCaps) {
 
             // Run the test, and set the score based on the result.
             try {
-                var response = await driver
+                let response = await driver
                     .wait(webdriver.until.titleIs('Take Home Test'), 1000)
                     .catch(() => {
                     });
@@ -103,8 +103,8 @@ exports.runTest = function (testCaps) {
             function setScore(score) {
 
                 //webdriver has built-in promise to use
-                var deferred = webdriver.promise.defer();
-                var result = {error: false, message: null};
+                let deferred = webdriver.promise.defer();
+                let result = {error: false, message: null};
 
                 if (sessionId) {
 
