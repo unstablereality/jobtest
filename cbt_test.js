@@ -36,11 +36,9 @@ cbt.start(
             testDevices.push(getDevice('Mac', apiResult));
             testDevices.push(getDevice('mobile', apiResult));
 
-            // Initialize an array to hold the capabilities for the tests.
-            let testCaps = [];
 
             // Iterate the array of devices and get what we need for the selenium capabilities list.
-            testDevices.forEach(function (testDevice) {
+            let testCaps = testDevices.map(function (testDevice) {
 
                 // Get a random browser from the device.
                 let browser = getRandom(testDevice.browsers);
@@ -50,7 +48,7 @@ cbt.start(
 
                 // If the device is mobile, set up the mobile capabilities list.
                 if (testDevice.device === 'mobile') {
-                    testCaps.push(
+                    return (
                         {
                             browserName: browser.caps.browserName,
                             deviceName: testDevice.caps.deviceName,
@@ -65,7 +63,7 @@ cbt.start(
                 // If the device is a desktop, set up the desktop capabilities list.
                 if (testDevice.device === 'desktop') {
                     let res = getRandom(testDevice.resolutions);
-                    testCaps.push(
+                    return (
                         {
                             browserName: browser.caps.browserName,
                             platform: testDevice.caps.platform,
